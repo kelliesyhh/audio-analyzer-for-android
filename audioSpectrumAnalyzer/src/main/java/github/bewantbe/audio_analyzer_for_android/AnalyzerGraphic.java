@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import github.bewantbe.R;
+
 /**
  * Custom view to draw the FFT graph
  */

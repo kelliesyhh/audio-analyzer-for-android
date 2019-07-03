@@ -19,6 +19,8 @@ import android.content.res.Resources;
 import android.media.MediaRecorder;
 import android.util.Log;
 
+import github.bewantbe.R;
+
 /**
  * Basic properties of Analyzer.
  */

@@ -75,32 +75,6 @@
             custom:itemsDisplay="@string/button_recording"
             custom:items="Mon Rec" />
 
-        <Button
-            android:id="@+id/button_sample_rate"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/button_button_height"
-            android:layout_gravity="center"
-            android:onClick="showPopupMenu"
-            android:text="@string/sample_s"
-            android:textSize="@dimen/button_text_fontsize" />
-
-        <Button
-            android:id="@+id/button_fftlen"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/button_button_height"
-            android:layout_gravity="center"
-            android:onClick="showPopupMenu"
-            android:text="@string/fftlen"
-            android:textSize="@dimen/button_text_fontsize" />
-
-        <Button
-            android:id="@+id/button_average"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/button_button_height"
-            android:layout_gravity="center"
-            android:onClick="showPopupMenu"
-            android:text="@string/ave"
-            android:textSize="@dimen/button_text_fontsize" />
     </LinearLayout>
 
     <LinearLayout
@@ -121,19 +95,6 @@
             custom:itemsDisplay="@string/button_spectrum_spectrogram_mode"
             custom:items="spum spam" />
 
-        <github.bewantbe.audio_analyzer_for_android.SelectorText
-            android:id="@+id/dbA"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:paddingLeft="15dp"
-            android:paddingStart="15dp"
-            android:tag="select"
-            android:text="dB"
-            android:textSize="20sp"
-            custom:itemsDisplay="@string/button_dbA"
-            custom:items="dB dBA" />
-
         <!--<github.bewantbe.audio_analyzer_for_android.SelectorText-->
         <!--android:id="@+id/graph_view_mode"-->
         <!--android:layout_width="wrap_content"-->
@@ -144,19 +105,6 @@
         <!--android:text="scale"-->
         <!--android:textSize="20sp"-->
         <!--custom:items="cursor scale" />-->
-
-        <github.bewantbe.audio_analyzer_for_android.SelectorText
-            android:id="@+id/freq_scaling_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="4dp"
-            android:paddingLeft="15dp"
-            android:paddingStart="15dp"
-            android:tag="select"
-            android:text="linear"
-            android:textSize="20sp"
-            custom:itemsDisplay="@string/button_freq_scaling_mode"
-            custom:items="linear log note" />
 
         <github.bewantbe.audio_analyzer_for_android.SelectorText
             android:id="@+id/run"

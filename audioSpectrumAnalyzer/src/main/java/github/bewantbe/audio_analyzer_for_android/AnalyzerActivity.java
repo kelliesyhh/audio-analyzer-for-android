@@ -315,7 +315,7 @@ public class AnalyzerActivity extends Activity
         }
 
         // dismiss the pop up
-        switch (buttonId) {
+        /*switch (buttonId) {
             case R.id.button_sample_rate:
                 analyzerViews.popupMenuSampleRate.dismiss();
                 if (! isLockViewRange) {
@@ -349,13 +349,13 @@ public class AnalyzerActivity extends Activity
             default:
                 Log.w(TAG, "onItemClick(): no this button");
                 b_need_restart_audio = false;
-        }
+        }*/
 
         editor.commit();
 
-        if (b_need_restart_audio) {
+        /*if (b_need_restart_audio) {
             restartSampling(analyzerParam);
-        }
+        }*/
     }
 
     // Load preferences for Views
@@ -376,17 +376,17 @@ public class AnalyzerActivity extends Activity
         if (!isSpam) {
             ((SelectorText) findViewById(R.id.spectrum_spectrogram_mode)).nextValue();
         }
-        String axisMode = sharedPref.getString("freq_scaling_mode", "linear");
+/*        String axisMode = sharedPref.getString("freq_scaling_mode", "linear");
         SelectorText st = (SelectorText) findViewById(R.id.freq_scaling_mode);
-        st.setValue(axisMode);
+        st.setValue(axisMode);*/
 
         Log.i(TAG, "loadPreferenceForView():"+
                 "\n  sampleRate  = " + analyzerParam.sampleRate +
                 "\n  fftLen      = " + analyzerParam.fftLen +
                 "\n  nFFTAverage = " + analyzerParam.nFFTAverage);
-        ((Button) findViewById(R.id.button_sample_rate)).setText(Integer.toString(analyzerParam.sampleRate));
+/*        ((Button) findViewById(R.id.button_sample_rate)).setText(Integer.toString(analyzerParam.sampleRate));
         ((Button) findViewById(R.id.button_fftlen     )).setText(Integer.toString(analyzerParam.fftLen));
-        ((Button) findViewById(R.id.button_average    )).setText(Integer.toString(analyzerParam.nFFTAverage));
+        ((Button) findViewById(R.id.button_average    )).setText(Integer.toString(analyzerParam.nFFTAverage));*/
     }
 
     private void LoadPreferences() {

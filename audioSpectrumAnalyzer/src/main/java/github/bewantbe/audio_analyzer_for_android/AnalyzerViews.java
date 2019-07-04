@@ -330,7 +330,7 @@ class AnalyzerViews {
         // Set window width according to max text width
         popupWindow.setWidth((int)w);
         // also set button width
-        ((Button) activity.findViewById(resId)).setWidth((int)(w + 5 * DPRatio));
+/*        ((Button) activity.findViewById(resId)).setWidth((int)(w + 5 * DPRatio));*/
         // Set the text on button in loadPreferenceForView()
 
         // set the list view as pop up window content

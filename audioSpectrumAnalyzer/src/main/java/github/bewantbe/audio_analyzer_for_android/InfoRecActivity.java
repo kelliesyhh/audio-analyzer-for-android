@@ -21,15 +21,13 @@ import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.os.Build;
 import android.os.Bundle;
-import androidx.core.app.NavUtils;
+import android.support.v4.app.NavUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-
-import github.bewantbe.R;
 
 // Test all (including unknown) recorder sources by open it and read data.
 

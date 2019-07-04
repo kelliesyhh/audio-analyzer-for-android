@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="instructions_title" translatable="false">      User Manual</string>
-    <string name="dismiss" translatable="false">      Close</string>
-    <string name="instructions_text" translatable="false"><![CDATA[<h2>Button operation</h2>
+    <string name="instructions_title">      User Manual</string>
+    <string name="dismiss">      Close</string>
+    <string name="instructions_text"><![CDATA[<h2>Button operation</h2>
 <font color="green">1D/2D</font>
 <br/><b>1D</b>: Show the real time <b>sp</b>ectr<b>um</b>.
 <br/><b>2D</b>: Show the <b>sp</b>ectrogr<b>am</b> in a duration. The color represents strength of the sound at a certain frequency and time.

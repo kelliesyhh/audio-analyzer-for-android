@@ -26,7 +26,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Handler;
 import android.os.SystemClock;
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 import android.text.Html;
 import android.text.method.ScrollingMovementMethod;
 import android.text.method.LinkMovementMethod;
@@ -41,8 +41,6 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import github.bewantbe.R;
 
 /**
  * Operate the views in the UI here.

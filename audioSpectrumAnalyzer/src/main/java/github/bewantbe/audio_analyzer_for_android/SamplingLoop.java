@@ -24,8 +24,6 @@ import android.util.Log;
 
 import java.util.Arrays;
 
-import github.bewantbe.R;
-
 /**
  * Read a snapshot of audio data at a regular interval, and compute the FFT
  * @author suhler@google.com

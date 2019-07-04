@@ -32,6 +32,8 @@ import android.widget.TextView;
 
 import java.text.DecimalFormat;
 
+import github.bewantbe.R;
+
 /**
  * For showing and setting plot ranges,
  * including frequency (Hz) and loudness (dB).

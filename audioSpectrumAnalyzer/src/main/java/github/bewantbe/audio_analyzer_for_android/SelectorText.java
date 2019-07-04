@@ -31,6 +31,8 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.RotateAnimation;
 import android.widget.TextView;
 
+import github.bewantbe.R;
+
 /**
  * Text view that toggles through a set of values.
  * @author suhler@google.com (Stephen Uhler)

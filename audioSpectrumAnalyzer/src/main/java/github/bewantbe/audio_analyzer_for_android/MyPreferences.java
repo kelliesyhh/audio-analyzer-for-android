@@ -27,6 +27,8 @@ import android.util.Log;
 
 import java.util.Arrays;
 
+import github.bewantbe.R;
+
 // I was using an old cell phone -- API level 9 (android 2.3.6),
 // so here use PreferenceActivity instead of PreferenceFragment.
 // http://developer.android.com/guide/topics/ui/settings.html

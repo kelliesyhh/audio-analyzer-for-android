@@ -83,7 +83,6 @@ public class Audio_Record extends Activity {
             sData[i] = 0;
         }
         return bytes;
-
     }
 
     private void writeAudioDataToFile() {

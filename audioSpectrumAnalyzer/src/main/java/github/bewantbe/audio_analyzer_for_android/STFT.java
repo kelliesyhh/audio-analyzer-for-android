@@ -254,7 +254,7 @@ class STFT {
         }
     }
 
-    public void feedData(short[] ds, int[] numOfReadShort) {
+    public void feedData(short[] ds) {
       feedData(ds, ds.length);
     }
 

@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="github.bewantbe.depressionanalysis.Recording"
+    tools:layout_editor_absoluteY="56dp"
     tools:showIn="@layout/activity_recording">
 
     <TextView
@@ -106,32 +107,31 @@
         app:layout_constraintTop_toBottomOf="@+id/lblElapsedTime" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnSpectrogram"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="299dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="175dp"
         android:layout_marginBottom="17dp"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="2dp"
         android:backgroundTint="#3F51B4"
-        android:text="Show"
+        android:text="Spectrum/Spectrogram Mode"
         android:textColor="#FFFFFF"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <!--<ListView-->
-        <!--android:id="@+id/lstResults2"-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="0dp"-->
-        <!--android:layout_marginStart="24dp"-->
-        <!--android:layout_marginTop="16dp"-->
-        <!--android:layout_marginEnd="24dp"-->
-        <!--android:layout_marginBottom="16dp"-->
-        <!--app:layout_constraintBottom_toTopOf="@+id/amplitudeWaveFormView"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toBottomOf="@+id/lblElapsedTime" />-->
+    <!--android:id="@+id/lstResults2"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="0dp"-->
+    <!--android:layout_marginStart="24dp"-->
+    <!--android:layout_marginTop="16dp"-->
+    <!--android:layout_marginEnd="24dp"-->
+    <!--android:layout_marginBottom="16dp"-->
+    <!--app:layout_constraintBottom_toTopOf="@+id/amplitudeWaveFormView"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/lblElapsedTime" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

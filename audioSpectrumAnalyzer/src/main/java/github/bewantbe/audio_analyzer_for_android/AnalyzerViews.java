@@ -97,13 +97,13 @@ class AnalyzerViews {
         popupMenuAverage = popupMenuCreate(
                 res.getStringArray(R.array.fft_ave_num), R.id.button_average);
 
-        setTextViewFontSize();
+        //setTextViewFontSize();
     }
 
     // Set text font size of textview_cur and textview_peak
     // according to space left
     //@SuppressWarnings("deprecation")
-    private void setTextViewFontSize() {
+    /*private void setTextViewFontSize() {
         TextView tv = (TextView) activity.findViewById(R.id.textview_cur);
         // At this point tv.getWidth(), tv.getLineCount() will return 0
 
@@ -126,7 +126,7 @@ class AnalyzerViews {
 
         ((TextView) activity.findViewById(R.id.textview_cur)).setTextSize(TypedValue.COMPLEX_UNIT_PX, fs);
         ((TextView) activity.findViewById(R.id.textview_peak)).setTextSize(TypedValue.COMPLEX_UNIT_PX, fs);
-    }
+    }*/
 
     // Prepare the spectrum and spectrogram plot (from scratch or full reset)
     // Should be called before samplingThread starts.
@@ -376,51 +376,7 @@ class AnalyzerViews {
             }
         };
     }
-
-    private void refreshCursorLabel() {
-        double f1 = graphView.getCursorFreq();
-
-        textCur.setLength(0);
-        textCur.append(activity.getString(R.string.text_cur));
-        SBNumFormat.fillInNumFixedWidthPositive(textCur, f1, 5, 1);
-        textCur.append("Hz(");
-        AnalyzerUtil.freq2Cent(textCur, f1, " ");
-        textCur.append(") ");
-        SBNumFormat.fillInNumFixedWidth(textCur, graphView.getCursorDB(), 3, 1);
-        textCur.append("dB");
-        textCur.getChars(0, Math.min(textCur.length(), textCurChar.length), textCurChar, 0);
-
-        ((TextView) activity.findViewById(R.id.textview_cur))
-                .setText(textCurChar, 0, Math.min(textCur.length(), textCurChar.length));
-    }
-
-    private void refreshRMSLabel(double dtRMSFromFT) {
-        textRMS.setLength(0);
-        textRMS.append("RMS:dB \n");
-        SBNumFormat.fillInNumFixedWidth(textRMS, 20*Math.log10(dtRMSFromFT), 3, 1);
-        textRMS.getChars(0, Math.min(textRMS.length(), textRMSChar.length), textRMSChar, 0);
-
-        TextView tv = (TextView) activity.findViewById(R.id.textview_RMS);
-        tv.setText(textRMSChar, 0, textRMSChar.length);
-        tv.invalidate();
-    }
-
-    private void refreshPeakLabel(double maxAmpFreq, double maxAmpDB) {
-        textPeak.setLength(0);
-        textPeak.append(activity.getString(R.string.text_peak));
-        SBNumFormat.fillInNumFixedWidthPositive(textPeak, maxAmpFreq, 5, 1);
-        textPeak.append("Hz(");
-        AnalyzerUtil.freq2Cent(textPeak, maxAmpFreq, " ");
-        textPeak.append(") ");
-        SBNumFormat.fillInNumFixedWidth(textPeak, maxAmpDB, 3, 1);
-        textPeak.append("dB");
-        textPeak.getChars(0, Math.min(textPeak.length(), textPeakChar.length), textPeakChar, 0);
-
-        TextView tv = (TextView) activity.findViewById(R.id.textview_peak);
-        tv.setText(textPeakChar, 0, textPeakChar.length);
-        tv.invalidate();
-    }
-
+    
     private void refreshRecTimeLable(double wavSec, double wavSecRemain) {
         // consist with @string/textview_rec_text
         textRec.setLength(0);
@@ -470,14 +426,6 @@ class AnalyzerViews {
             // and then just do invalidate() here.
             if ((viewMask & VIEW_MASK_graphView) != 0)
                 graphView.invalidate();
-            // RMS
-            if ((viewMask & VIEW_MASK_textview_RMS) != 0)
-                refreshRMSLabel(activity.dtRMSFromFT);
-            // peak frequency
-            if ((viewMask & VIEW_MASK_textview_peak) != 0)
-                refreshPeakLabel(activity.maxAmpFreq, activity.maxAmpDB);
-            if ((viewMask & VIEW_MASK_CursorLabel) != 0)
-                refreshCursorLabel();
             if ((viewMask & VIEW_MASK_RecTimeLable) != 0 && activity.samplingThread != null)
                 refreshRecTimeLable(activity.samplingThread.wavSec, activity.samplingThread.wavSecRemain);
         } else {

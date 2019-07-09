@@ -83,7 +83,7 @@ public class AnalyzerActivity extends Activity
 
     private boolean isMeasure = false;
     private boolean isLockViewRange = false;
-    volatile boolean bSaveWav = false;
+    static volatile boolean bSaveWav = false;
 
     CalibrationLoad calibLoad = new CalibrationLoad();  // data for calibration of spectrum
 
@@ -105,6 +105,9 @@ public class AnalyzerActivity extends Activity
         loadPreferenceForView();
 
         analyzerViews = new AnalyzerViews(this);
+    
+        bSaveWav = getIntent().getBooleanExtra("bSaveWav", false);
+        System.out.println("Intent bSaveWav: " + bSaveWav);
 
         // travel Views, and attach ClickListener to the views that contain android:tag="select"
         visit((ViewGroup) analyzerViews.graphView.getRootView(), new Visit() {
@@ -786,6 +789,11 @@ public class AnalyzerActivity extends Activity
             ((SelectorText) findViewById(R.id.button_recording)).nextValue();
             bSaveWav = false;
             analyzerViews.enableSaveWavView(bSaveWav);
+            boolean pause = true;
+            if (samplingThread != null && samplingThread.getPause() != pause) {
+                samplingThread.finish();
+            }
+            analyzerViews.graphView.spectrogramPlot.setPause(pause);
 //      ((SelectorText) findViewById(R.id.button_recording)).performClick();
             ActivityCompat.requestPermissions(AnalyzerActivity.this,
                     new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
@@ -851,7 +859,8 @@ public class AnalyzerActivity extends Activity
         }
         switch (v.getId()) {
             case R.id.button_recording:
-                bSaveWav = value.equals("Rec");
+                bSaveWav = value.equals("Stop");
+                
                 //  SelectorText st = (SelectorText) findViewById(R.id.run);
                 //  if (bSaveWav && ! st.getText().toString().equals("stop")) {
                 //    st.nextValue();
@@ -871,7 +880,7 @@ public class AnalyzerActivity extends Activity
                 //case R.id.graph_view_mode:
                 //  isMeasure = !value.equals("scale");
                 //  return false;
-            case R.id.freq_scaling_mode: {
+          /*  case R.id.freq_scaling_mode: {
                 Log.d(TAG, "processClick(): freq_scaling_mode = " + value);
                 analyzerViews.graphView.setAxisModeLinear(value);
                 editor.putString("freq_scaling_mode", value);
@@ -885,7 +894,7 @@ public class AnalyzerActivity extends Activity
                 }
                 editor.putBoolean("dbA", analyzerParam.isAWeighting);
                 editor.commit();
-                return false;
+                return false;*/
             case R.id.spectrum_spectrogram_mode:
                 if (value.equals("spum")) {
                     analyzerViews.graphView.switch2Spectrum();

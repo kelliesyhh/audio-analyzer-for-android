@@ -167,6 +167,10 @@ public class Recording extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Intent intent2pass = new Intent(getApplicationContext(), AnalyzerActivity.class);
+                intent2pass.putExtra("bSaveWav", true);
+                startActivity(intent2pass);
+                
                 if (!recorder.isRecording) {
 
                     //STARTS THE RECORDING PROCESS
@@ -181,22 +185,23 @@ public class Recording extends AppCompatActivity {
                     end = false;
 
                     fab.setImageResource(R.drawable.ic_pause);
-                    recorder.startRecording();
+                    //recorder.startRecording();
                     final String filename = getIntent().getStringExtra("userID") + "_" + (now.toGMTString().replaceAll(" ", "_").toLowerCase());
 
 
                     recordingThread = new Thread(new Runnable() {
                         public void run() {
-                            processAudioData(myWave, filename);
+                            //processAudioData(myWave, filename);
+                            processAudioData(filename);
                         }
                     }, "AudioRecorder Thread");
                     recordingThread.start();
 
-                    myWave.start();
+                    // myWave.start();
 
-                    String startTime = "" + recorder.startTime.getHours() + ":" + recorder.startTime.getMinutes() + ":" + recorder.startTime.getSeconds();
+                  //  String startTime = "" + recorder.startTime.getHours() + ":" + recorder.startTime.getMinutes() + ":" + recorder.startTime.getSeconds();
 
-                    lblStartTime.setText("Start Time: " + startTime);
+       //             lblStartTime.setText("Start Time: " + startTime);
 
                     //Notification to show recording started
                     //Toast.makeText(getApplicationContext(), "Recording Started", Toast.LENGTH_LONG).show();
@@ -209,8 +214,8 @@ public class Recording extends AppCompatActivity {
                     fab.setImageResource(R.drawable.ic_record_audio);
                     fab.hide();
                     fab.setClickable(false);
-                    recorder.stopRecording();
-                    myWave.stop();
+                    //recorder.stopRecording();
+                    //myWave.stop();
                     end = true;
                     postCall();
                     //Notification to show recording stopped
@@ -223,14 +228,13 @@ public class Recording extends AppCompatActivity {
         });
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        Button btnSpectrogram = findViewById(R.id.button);
+        Button btnSpectrogram = findViewById(R.id.btnSpectrogram);
         btnSpectrogram.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(getApplicationContext(), AnalyzerActivity.class));
             }
         });
-
     }
 
     @Override
@@ -285,7 +289,7 @@ public class Recording extends AppCompatActivity {
     }
 
 
-    private void processAudioData(AmplitudeWaveFormView myWave, String filename) {
+    /*private void processAudioData(AmplitudeWaveFormView myWave, String filename) {
 //        genericToast = Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_LONG);
 //        genericToast.show();
         short sData[] = new short[BufferElements2Rec];
@@ -356,7 +360,7 @@ public class Recording extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
     private void postCall() {
         RequestParams reqParam = new RequestParams();
@@ -444,7 +448,79 @@ public class Recording extends AppCompatActivity {
             }
         }
     }
+    
+    private void processAudioData(String filename) {
+//        genericToast = Toast.makeText(getApplicationContext(), "TEST", Toast.LENGTH_LONG);
+//        genericToast.show();
+        short[] sData = new short[BufferElements2Rec];
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        filePath += "/DepressionAnalysis";
+        File projDir = new File(filePath);
+        projDir.mkdir();
+        filePath += "/" + filename + ".pcm";
+        System.out.println("Filepath: " + filePath);
+        FileOutputStream os = null;
+        try {
+            os = new FileOutputStream(filePath);
+            System.out.println(os.getChannel().toString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        while (recorder.isRecording) {
+            double sum = 0;
+            updateElapsed(recorder.startTime);
+            //gets the voice output from microphone to byte format
+            int readSize = recorder.recorder.read(sData, 0, BufferElements2Rec);
+            
+            //Create Audio Block
+//            AudioBlock newBlock = new AudioBlock(sData);
+//            blockQueue.add(newBlock);
+//            blockQueue.add(new AudioBlock(sData));
 
+//            myWave.updateAmplitude(50);
+            
+            for (int i = 0; i < readSize; i++) {
+//                try {
+//                    output.writeShort(sData [i]);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+                sum += sData[i] * sData[i];
+            }
+            
+            if (readSize > 0 && updateWave) {
+                final double amplitude = sum / readSize;
+            }
+
+
+//            StringBuilder sb = new StringBuilder();
+            try {
+                byte[] bData = recorder.short2byte(sData);
+//                for (byte b : bData) {
+//                    sb.append(String.format("%02X", b));
+//                }
+//                os.write(bData, 0, readSize);
+                os.write(bData, 0, BufferElements2Rec * BytesPerElement);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+//            if(recorder.isRecording) {
+//                System.out.println(sb.toString());
+//            }
+        }
+        
+        try {
+            os.close();
+            System.out.println("File saved: " + filePath + "/" + filename);
+            PredictiveIndex.setSAVED_FILE(filePath);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    
+    
 }
 
 

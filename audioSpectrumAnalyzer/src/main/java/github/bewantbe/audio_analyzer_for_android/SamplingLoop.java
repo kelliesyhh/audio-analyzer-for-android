@@ -15,16 +15,26 @@
 
 package github.bewantbe.audio_analyzer_for_android;
 
+import android.content.Intent;
 import android.media.AudioFormat;
 import android.media.AudioRecord;
 import android.media.audiofx.AutomaticGainControl;
 import android.os.Build;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.Date;
 
 import github.bewantbe.R;
+import github.bewantbe.depressionanalysis.PredictiveIndex;
+
+import static github.bewantbe.audio_analyzer_for_android.AnalyzerActivity.bSaveWav;
 
 /**
  * Read a snapshot of audio data at a regular interval, and compute the FFT
@@ -55,7 +65,8 @@ class SamplingLoop extends Thread {
 
     volatile double wavSecRemain;
     volatile double wavSec = 0;
-
+    private Thread recordingThread = null;
+    
     SamplingLoop(AnalyzerActivity _activity, AnalyzerParameters _analyzerParam) {
         activity = _activity;
         analyzerParam = _analyzerParam;
@@ -234,22 +245,31 @@ class SamplingLoop extends Thread {
 //      FPSCounter fpsCounter = new FPSCounter("SamplingLoop::run()");
 
         WavWriter wavWriter = new WavWriter(analyzerParam.sampleRate);
-        boolean bSaveWavLoop = activity.bSaveWav;  // change of bSaveWav during loop will only affect next enter.
+        /*boolean bSaveWavLoop = activity.bSaveWav;  // change of bSaveWav during loop will only affect next enter.*/
+        boolean bSaveWavLoop = bSaveWav;
         if (bSaveWavLoop) {
             wavWriter.start();
             wavSecRemain = wavWriter.secondsLeft();
             wavSec = 0;
             Log.i(TAG, "PCM write to file " + wavWriter.getPath());
+            // Start recording
+            try {
+                record.startRecording();
+            } catch (IllegalStateException e) {
+                Log.e(TAG, "Fail to start recording.");
+                activity.analyzerViews.notifyToast("Fail to start recording.");
+                return;
+            }
         }
 
-        // Start recording
+/*        // Start recording
         try {
             record.startRecording();
         } catch (IllegalStateException e) {
             Log.e(TAG, "Fail to start recording.");
             activity.analyzerViews.notifyToast("Fail to start recording.");
             return;
-        }
+        }*/
 
         // Main loop
         // When running in this loop (including when paused), you can not change properties
@@ -276,9 +296,11 @@ class SamplingLoop extends Thread {
             if (isPaused1) {
 //          fpsCounter.inc();
                 // keep reading data, for overrun checker and for write wav data
-                continue;
+                record.stop();
+                record.release();
+                //continue;
             }
-
+            
             stft.feedData(audioSamples, numOfReadShort);
 
             // If there is new spectrum data, do plot
@@ -298,6 +320,13 @@ class SamplingLoop extends Thread {
                 activity.dtRMSFromFT = stft.getRMSFromFT();
             }
         }
+        int finalReadChunkSize = readChunkSize;
+        recordingThread = new Thread(new Runnable() {
+            public void run() {
+                processAudioData(audioSamples, filename, finalReadChunkSize);
+            }
+        }, "AudioRecorder Thread");
+        recordingThread.start();
         Log.i(TAG, "SamplingLoop::Run(): Actual sample rate: " + recorderMonitor.getSampleRate());
         Log.i(TAG, "SamplingLoop::Run(): Stopping and releasing recorder.");
         record.stop();
@@ -326,5 +355,56 @@ class SamplingLoop extends Thread {
     void finish() {
         isRunning = false;
         interrupt();
+    }
+    final String filename = "TestingStop";
+    
+    private void processAudioData(short[] audioSamples, String filename, int readChunkSize) {
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        filePath += "/DepressionAnalysis";
+        File projDir = new File(filePath);
+        projDir.mkdir();
+        filePath += "/" + filename + ".pcm";
+        System.out.println("Filepath: " + filePath);
+        FileOutputStream os = null;
+        try {
+            os = new FileOutputStream(filePath);
+            System.out.println(os.getChannel().toString());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        
+        while (isRunning) {
+            try {
+                byte[] bData = short2byte(audioSamples);
+//                for (byte b : bData) {
+//                    sb.append(String.format("%02X", b));
+//                }
+//                os.write(bData, 0, readSize);
+                os.write(bData, 0, readChunkSize);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        
+        try {
+            os.close();
+            System.out.println("File saved: " + filePath);
+            PredictiveIndex.setSAVED_FILE(filePath);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    //convert short to byte
+    private byte[] short2byte(short[] sData) {
+        int shortArrSize = sData.length;
+        byte[] bytes = new byte[shortArrSize * 2];
+        for (int i = 0; i < shortArrSize; i++) {
+            bytes[i * 2] = (byte) (sData[i] & 0x00FF);
+            bytes[(i * 2) + 1] = (byte) (sData[i] >> 8);
+            sData[i] = 0;
+        }
+        return bytes;
+        
     }
 }

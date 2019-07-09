@@ -21,7 +21,7 @@
     <string name="button_run" translatable="false">run::stop</string>
     <string name="button_dbA" translatable="false">dB::dBA</string>
     <string name="button_spectrum_spectrogram_mode" translatable="false">1D::2D</string>
-    <string name="button_recording" translatable="false">Mon::Rec</string>
+    <string name="button_recording" translatable="false">Start::Stop</string>
 
     <!-- permission dialog -->
     <string name="permission_explanation_title" translatable="false">Permission denied</string>

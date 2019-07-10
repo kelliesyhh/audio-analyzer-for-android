@@ -15,7 +15,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".SpectrogramShow"></activity>
         <activity
             android:name=".TestAPI"
             android:label="@string/title_activity_test_api"

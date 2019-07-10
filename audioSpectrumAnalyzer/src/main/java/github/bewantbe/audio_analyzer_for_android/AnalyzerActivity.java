@@ -30,6 +30,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
@@ -55,7 +56,23 @@ import android.widget.AdapterView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedQueue;
+
+import cz.msebera.android.httpclient.Header;
 import github.bewantbe.R;
+import github.bewantbe.depressionanalysis.PredictiveIndex;
+import github.bewantbe.depressionanalysis.restClient;
+
+import static github.bewantbe.audio_analyzer_for_android.SamplingLoop.sendToServer;
 
 /**
  * Audio "FFT" analyzer.
@@ -84,9 +101,13 @@ public class AnalyzerActivity extends Activity
     private boolean isMeasure = false;
     private boolean isLockViewRange = false;
     static volatile boolean bSaveWav = false;
+    static String userName, userID;
 
     CalibrationLoad calibLoad = new CalibrationLoad();  // data for calibration of spectrum
-
+    
+    public static ConcurrentLinkedQueue<JSONObject> myResponses = new ConcurrentLinkedQueue<>();
+    Date now = new Date();
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         //  Debug.startMethodTracing("calc");
@@ -108,7 +129,10 @@ public class AnalyzerActivity extends Activity
     
         bSaveWav = getIntent().getBooleanExtra("bSaveWav", false);
         System.out.println("Intent bSaveWav: " + bSaveWav);
-
+        
+        userName = getIntent().getStringExtra("userName");
+        userID = getIntent().getStringExtra("userID");
+        
         // travel Views, and attach ClickListener to the views that contain android:tag="select"
         visit((ViewGroup) analyzerViews.graphView.getRootView(), new Visit() {
           @Override
@@ -860,7 +884,7 @@ public class AnalyzerActivity extends Activity
         switch (v.getId()) {
             case R.id.button_recording:
                 bSaveWav = value.equals("Stop");
-                
+                if (sendToServer) postCall();
                 //  SelectorText st = (SelectorText) findViewById(R.id.run);
                 //  if (bSaveWav && ! st.getText().toString().equals("stop")) {
                 //    st.nextValue();
@@ -877,24 +901,6 @@ public class AnalyzerActivity extends Activity
                 }
                 analyzerViews.graphView.spectrogramPlot.setPause(pause);
                 return false;
-                //case R.id.graph_view_mode:
-                //  isMeasure = !value.equals("scale");
-                //  return false;
-          /*  case R.id.freq_scaling_mode: {
-                Log.d(TAG, "processClick(): freq_scaling_mode = " + value);
-                analyzerViews.graphView.setAxisModeLinear(value);
-                editor.putString("freq_scaling_mode", value);
-                editor.commit();
-                return false;
-            }
-            case R.id.dbA:
-                analyzerParam.isAWeighting = !value.equals("dB");
-                if (samplingThread != null) {
-                    samplingThread.setAWeighting(analyzerParam.isAWeighting);
-                }
-                editor.putBoolean("dbA", analyzerParam.isAWeighting);
-                editor.commit();
-                return false;*/
             case R.id.spectrum_spectrogram_mode:
                 if (value.equals("spum")) {
                     analyzerViews.graphView.switch2Spectrum();
@@ -953,5 +959,80 @@ public class AnalyzerActivity extends Activity
         // put code here for the moment that graph size just changed
         Log.v(TAG, "ready()");
         analyzerViews.invalidateGraphView();
+    }
+    
+    public void postCall() {
+        RequestParams reqParam = new RequestParams();
+//        reqParam.add("username", "aaa");
+//        reqParam.add("password", "aaa@123");
+//        JSONArray myResponse;
+        
+        String filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        filePath += "/DepressionAnalysis";
+//        filePath += "/S1234567A_26_feb_2019_08:20:00_gmt.pcm";
+        filePath = PredictiveIndex.getSAVED_FILE();
+        System.out.println("postCall() print: " + filePath);
+        
+        File theFile = new File(filePath);
+        try {
+            reqParam.put("file", theFile);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        String url;
+        url = "/users/" + PredictiveIndex.getUSER() + "/analysis/" + PredictiveIndex.getSESSION_ID();
+//        url = "uploader";
+        
+        restClient.post(url, reqParam, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                // If the response is JSONObject instead of expected JSONArray
+                Log.d("API", "Post : " + response);
+                try {
+                    JSONObject serverResp = new JSONObject(response.toString());
+//                    myResponses.add(new JSONArray(response.toString()));
+//                    JSONArray myJSONArray = new JSONArray(response.toString());
+//                    System.out.println(response.toString());
+                    myResponses.add(serverResp);
+                    getResponses();
+                } catch (JSONException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray timeline) {
+                // Pull out the first event on the public timeline
+                System.out.println("Status: " + statusCode + "\nHeaders: " + headers + "\nResponse: " + timeline);
+                getResponses();
+            }
+            
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String str, Throwable throwable) {
+                // Pull out the first event on the public timeline
+                System.out.println("Status: " + statusCode + "\nHeaders: " + headers + "\nResponse: " + str);
+            }
+        });
+    }
+    
+    public void getResponses() {
+        while (!myResponses.isEmpty()) {
+//            JSONArray jsonArray = myResponses.poll();
+            JSONObject jsonArray = myResponses.poll();
+//            System.out.println("JSONARRAY: " + jsonArray.toString());
+            if (jsonArray != null) {
+                System.out.println("getResponses Called");
+//                if(jsonArray.toString().equals("{\"Prediction\":\"0\"}"))
+                try {
+                    double prediction = jsonArray.getDouble("Prediction");
+                    System.out.println("Patient shows " + String.format("%.2f", prediction) + "% signs of Depression");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println("Error in API Response");
+                }
+            }
+        }
     }
 }

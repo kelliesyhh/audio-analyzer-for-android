@@ -9,7 +9,7 @@ import com.loopj.android.http.RequestParams;
 public class restClient extends Application {
 //    private static final String BASE_URL = "http://172.17.192.30:3000";
 //    private static final String BASE_URL = "http://172.17.192.30:5000"; //SIT@RP - SIT-Wifi
-    private static final String BASE_URL = "http://192.168.1.11:5000"; //EC2 Instance
+    private static final String BASE_URL = "http://172.17.46.52:5000"; //EC2 Instance
 //    private static final String BASE_URL = "http://34.233.125.85:5000"; //GPU Instance
 
 

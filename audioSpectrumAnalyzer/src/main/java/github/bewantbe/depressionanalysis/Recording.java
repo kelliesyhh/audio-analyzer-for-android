@@ -169,6 +169,12 @@ public class Recording extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent2pass = new Intent(getApplicationContext(), AnalyzerActivity.class);
                 intent2pass.putExtra("bSaveWav", true);
+                
+                String usrName = getIntent().getStringExtra("userName");
+                String usrId = getIntent().getStringExtra("userID");
+                intent2pass.putExtra("userName", usrName);
+                intent2pass.putExtra("userID", usrId);
+                
                 startActivity(intent2pass);
                 
                 if (!recorder.isRecording) {

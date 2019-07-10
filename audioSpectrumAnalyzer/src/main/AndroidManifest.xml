@@ -52,15 +52,6 @@
                 android:value=".audio_analyzer_for_android.AnalyzerActivity" />
         </activity>
         <activity
-            android:name=".depressionanalysis.SpectrogramShow"
-            android:label="SpectrogramShow"
-            android:parentActivityName=".depressionanalysis.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".depressionanalysis.MainActivity" />
-        </activity>
-        <activity
             android:name=".depressionanalysis.TestAPI"
             android:label="@string/title_activity_test_api"
             android:parentActivityName=".depressionanalysis.MainActivity"

@@ -48,13 +48,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="4dp"
-            android:paddingLeft="15dp"
             android:paddingStart="15dp"
+            android:paddingLeft="15dp"
             android:tag="select"
-            android:text="1D"
+            android:text="@string/button_spectrum_spectrogram_mode"
             android:textSize="20sp"
-            custom:itemsDisplay="@string/button_spectrum_spectrogram_mode"
-            custom:items="spum spam" />
+            custom:items="spum spam"
+            custom:itemsDisplay="@string/button_spectrum_spectrogram_mode" />
 
         <!--<github.bewantbe.audio_analyzer_for_android.SelectorText-->
         <!--android:id="@+id/graph_view_mode"-->

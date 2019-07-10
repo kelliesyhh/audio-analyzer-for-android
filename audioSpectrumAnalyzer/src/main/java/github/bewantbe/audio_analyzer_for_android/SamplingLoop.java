@@ -24,17 +24,28 @@ import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
+import cz.msebera.android.httpclient.Header;
 import github.bewantbe.R;
 import github.bewantbe.depressionanalysis.PredictiveIndex;
+import github.bewantbe.depressionanalysis.restClient;
 
 import static github.bewantbe.audio_analyzer_for_android.AnalyzerActivity.bSaveWav;
+import static github.bewantbe.audio_analyzer_for_android.AnalyzerActivity.userID;
 
 /**
  * Read a snapshot of audio data at a regular interval, and compute the FFT
@@ -66,6 +77,8 @@ class SamplingLoop extends Thread {
     volatile double wavSecRemain;
     volatile double wavSec = 0;
     private Thread recordingThread = null;
+    private Date now = new Date();
+    public static boolean sendToServer;
     
     SamplingLoop(AnalyzerActivity _activity, AnalyzerParameters _analyzerParam) {
         activity = _activity;
@@ -331,6 +344,7 @@ class SamplingLoop extends Thread {
         Log.i(TAG, "SamplingLoop::Run(): Stopping and releasing recorder.");
         record.stop();
         record.release();
+        sendToServer = true;
         if (bSaveWavLoop) {
             Log.i(TAG, "SamplingLoop::Run(): Ending saved wav.");
             wavWriter.stop();
@@ -356,7 +370,7 @@ class SamplingLoop extends Thread {
         isRunning = false;
         interrupt();
     }
-    final String filename = "TestingStop";
+    private final String filename = userID + "_" + (now.toGMTString().replaceAll(" ", "_").toLowerCase());
     
     private void processAudioData(short[] audioSamples, String filename, int readChunkSize) {
         String filePath = Environment.getExternalStorageDirectory().getAbsolutePath();
@@ -405,6 +419,5 @@ class SamplingLoop extends Thread {
             sData[i] = 0;
         }
         return bytes;
-        
     }
 }
